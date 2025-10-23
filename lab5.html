@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Лабораторная №5: Vue.js</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 2rem;
+      background: #f7f8fc;
+    }
+    .task {
+      border-radius: 16px;
+      border: 1px solid #d2d2e0;
+      box-shadow: 0 2px 8px 0 #ece9f2;
+      padding: 1.2rem 1.5rem;
+      margin-bottom: 2rem;
+      background: linear-gradient(90deg, #f0f4ff 80%, #ffe4ea 100%);
+      transition: box-shadow .2s;
+    }
+    .task:hover {
+      box-shadow: 0 4px 18px 0 #dec8fc;
+      border-color: #ba94f8;
+    }
+    h3 {
+      color: #5563fc;
+      letter-spacing: 1px;
+      margin-bottom: 0.9rem;
+      font-weight: 700;
+    }
+    label, input, button, p, li, span {
+      font-size: 1.12rem;
+    }
+    label {
+      color: #555578;
+      font-weight: 600;
+    }
+    input[type='text'], input[type='number'] {
+      padding: 0.35rem 0.7rem;
+      border: 1px solid #bebeea;
+      border-radius: 8px;
+      outline: none;
+      margin-bottom: 0.4rem;
+      margin-right: 0.3rem;
+    }
+    input:focus {
+      border-color: #7a4df8;
+      background: #fef7fd;
+    }
+    button {
+      padding: 0.4rem 1rem;
+      background: linear-gradient(90deg,#7a4df8 70%,#fc63ac 100%);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 600;
+      margin-right: 0.3rem;
+      transition: background .15s;
+    }
+    button:hover {
+      background: linear-gradient(90deg,#fc63ac 80%,#7a4df8 100%);
+      box-shadow: 0 0 8px #fc63ac66;
+    }
+    ul {
+      margin-top: 0.5rem; 
+      margin-bottom: 0.5rem;
+      padding-left: 1.6rem;
+    }
+    li {
+      color: #424285;
+      margin-bottom: 0.18rem;
+    }
+    .task:last-child { margin-bottom: 0; }
+    span { color: #7a4df8; font-weight: 600;}
+    .greeting { color: #fc63ac; font-weight: 600; }
+    .clock { font-size: 1.4rem; color: #7a4df8; font-weight: 700;}
+  </style>
+</head>
+<body>
+  <div id="app1" class="task">
+    <h3>Задача 1: Приветствие</h3>
+    <label>Введите имя: <input v-model="name" type="text"></label>
+    <p>Привет, <span>{{ name }}</span>!</p>
+  </div>
+
+  <div id="app2" class="task">
+    <h3>Задача 2: Счётчик</h3>
+    <button @click="count++">+1</button>
+    <button @click="count--">-1</button>
+    <span>Текущее значение: {{ count }}</span>
+  </div>
+
+  <div id="app3" class="task">
+    <h3>Задача 3: Показать/скрыть текст</h3>
+    <button @click="show = !show">
+      {{ show ? "Скрыть" : "Показать" }} описание
+    </button>
+    <p v-if="show" style="color:#424285;background:#fcf7ff;padding:0.3rem 0.8rem;border-radius:8px;">
+      Это условно отображаемый текст.
+    </p>
+  </div>
+
+  <div id="app4" class="task">
+    <h3>Задача 4: Список задач</h3>
+    <ul>
+      <li v-for="(item, idx) in items" :key="item.id">
+        {{ idx+1 }}. {{ item.name }}
+      </li>
+    </ul>
+  </div>
+
+  <div id="app5" class="task">
+    <h3>Задача 5: Добавление пользователя</h3>
+    <form @submit.prevent="addUser">
+      <input v-model="name" type="text" placeholder="Имя">
+      <input type="number" v-model="age" placeholder="Возраст">
+      <button type="submit">Добавить</button>
+    </form>
+    <ul>
+      <li v-for="(user, idx) in users" :key="idx">
+        <span>{{ user.name }}</span> (<span>{{ user.age }}</span>)
+      </li>
+    </ul>
+  </div>
+
+  <div id="app6" class="task">
+    <h3>Задача 6: Квадрат и куб числа</h3>
+    <input type="number" v-model="num" placeholder="Введите число">
+    <p>Число: <span>{{ num }}</span></p>
+    <p>Квадрат: <span>{{ square }}</span></p>
+    <p>Куб: <span>{{ cube }}</span></p>
+  </div>
+
+  <div id="app7" class="task">
+    <h3>Задача 7: Watch и время</h3>
+    <p class="clock">{{ time }}</p>
+    <p class="greeting">{{ greeting }}</p>
+  </div>
+  <script>
+    Vue.createApp({
+      data: () => ({ name: 'Гость' })
+    }).mount('#app1')
+
+    Vue.createApp({
+      data: () => ({ count: 0 })
+    }).mount('#app2')
+
+    Vue.createApp({
+      data: () => ({ show: false })
+    }).mount('#app3')
+
+    Vue.createApp({
+      data: () => ({
+        items: [
+          {id:1, name:'Подключить Vue'},
+          {id:2, name:'Создать компонент'},
+          {id:3, name:'Реализовать функционал'}
+        ]
+      })
+    }).mount('#app4')
+
+    Vue.createApp({
+      data: () => ({
+        name: '',
+        age: '',
+        users: []
+      }),
+      methods: {
+        addUser() {
+          if (this.name && this.age) {
+            this.users.push({ name: this.name, age: this.age })
+            this.name = ''
+            this.age = ''
+          }
+        }
+      }
+    }).mount('#app5')
+
+    Vue.createApp({
+      data: () => ({ num: 0 }),
+      computed: {
+        square() { return this.num * this.num },
+        cube() { return this.num * this.num * this.num }
+      }
+    }).mount('#app6')
+
+    Vue.createApp({
+      data: () => ({
+        time: '',
+      }),
+      computed: {
+        greeting() {
+          const hour = new Date().getHours()
+          if (hour < 12) return 'Доброе утро'
+          else if (hour < 18) return 'Добрый день'
+          else return 'Добрый вечер'
+        }
+      },
+      mounted() {
+        this.updateTime()
+        this.timer = setInterval(this.updateTime, 1000)
+      },
+      methods: {
+        updateTime() {
+          this.time = new Date().toLocaleTimeString()
+        }
+      }
+    }).mount('#app7')
+  </script>
+</body>
+</html>
